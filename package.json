@@ -27,7 +27,7 @@
     "clean": "rm -rf dist"
   },
   "lint-staged": {
-    "*.{ts,js,json}": [
+    "*.{ts,js,json,md}": [
       "eslint --fix",
       "prettier --write"
     ]
