@@ -1,60 +1,61 @@
 {
-  "name": "startech-core-backend",
-  "version": "1.0.0",
-  "description": "Core backend for Startech application",
-  "homepage": "https://github.com/AbdurRahmanSikder/startech-core-backend#readme",
-  "bugs": {
-    "url": "https://github.com/AbdurRahmanSikder/startech-core-backend/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/AbdurRahmanSikder/startech-core-backend.git"
-  },
-  "license": "ISC",
-  "author": "Abdur Rahman 19cse040@gmail.com",
-  "main": "dist/server.js",
-  "scripts": {
-    "dev": "nodemon src/server.ts",
-    "build": "tsc",
-    "start": "node dist/server.js",
-    "typecheck": "tsc --noEmit",
-    "lint": "eslint . --ext .ts",
-    "lint:fix": "eslint . --ext .ts --fix",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
-    "validate": "npm run typecheck && npm run lint && npm run format:check",
-    "prepare": "husky",
-    "clean": "rm -rf dist"
-  },
-  "lint-staged": {
-    "*.{ts,js,json,md}": [
-      "eslint --fix",
-      "prettier --write"
-    ]
-  },
-  "dependencies": {
-    "cloudinary": "^2.7.0",
-    "dotenv": "^17.2.3",
-    "express": "^5.1.0",
-    "mongoose": "^8.19.0",
-    "multer": "^2.0.2"
-  },
-  "devDependencies": {
-    "@eslint/js": "^9.36.0",
-    "@types/express": "^5.0.3",
-    "@types/multer": "^2.0.0",
-    "@types/node": "^24.6.2",
-    "@typescript-eslint/eslint-plugin": "^8.45.0",
-    "@typescript-eslint/parser": "^8.45.0",
-    "eslint": "^9.36.0",
-    "eslint-config-prettier": "^10.1.8",
-    "globals": "^16.4.0",
-    "husky": "^9.1.7",
-    "lint-staged": "^16.2.3",
-    "nodemon": "^3.1.10",
-    "prettier": "^3.6.2",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.9.3",
-    "typescript-eslint": "^8.45.0"
-  }
+    "name": "startech-core-backend",
+    "version": "1.0.0",
+    "description": "Core backend for Startech application",
+    "homepage": "https://github.com/AbdurRahmanSikder/startech-core-backend#readme",
+    "bugs": {
+        "url": "https://github.com/AbdurRahmanSikder/startech-core-backend/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/AbdurRahmanSikder/startech-core-backend.git"
+    },
+    "license": "ISC",
+    "author": "Abdur Rahman 19cse040@gmail.com",
+    "main": "dist/server.js",
+    "scripts": {
+        "dev": "nodemon src/server.ts",
+        "build": "tsc",
+        "start": "node dist/server.js",
+        "typecheck": "tsc --noEmit",
+        "lint": "eslint . --ext .ts",
+        "lint:fix": "eslint . --ext .ts --fix",
+        "format": "prettier --write .",
+        "format:check": "prettier --check .",
+        "validate": "npm run typecheck && npm run lint && npm run format:check",
+        "prepare": "husky",
+        "clean": "rm -rf dist"
+    },
+    "lint-staged": {
+        "*.{ts,js,json,md}": [
+            "eslint --fix",
+            "prettier --write"
+        ]
+    },
+    "dependencies": {
+        "bcrypt": "^6.0.0",
+        "cloudinary": "^2.7.0",
+        "dotenv": "^17.2.3",
+        "express": "^5.1.0",
+        "mongoose": "^8.19.0",
+        "multer": "^2.0.2"
+    },
+    "devDependencies": {
+        "@eslint/js": "^9.36.0",
+        "@types/express": "^5.0.3",
+        "@types/multer": "^2.0.0",
+        "@types/node": "^24.6.2",
+        "@typescript-eslint/eslint-plugin": "^8.45.0",
+        "@typescript-eslint/parser": "^8.45.0",
+        "eslint": "^9.36.0",
+        "eslint-config-prettier": "^10.1.8",
+        "globals": "^16.4.0",
+        "husky": "^9.1.7",
+        "lint-staged": "^16.2.3",
+        "nodemon": "^3.1.10",
+        "prettier": "^3.6.2",
+        "ts-node": "^10.9.2",
+        "typescript": "^5.9.3",
+        "typescript-eslint": "^8.45.0"
+    }
 }

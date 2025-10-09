@@ -1,204 +1,333 @@
 startech-backend/
-├── .husky/
-├── docs/
-├── node_modules/
-├── public/
-├── scripts/
-│
 ├── src/
-│ ├── configs/
-│ │ ├── database.config.ts # DB2 connection
-│ │ ├── clientDB.config.ts # DB1 connection (read-only)
-│ │ ├── redis.config.ts
-│ │ ├── email.config.ts
-│ │ └── index.ts
+│ ├── server.ts
+│ ├── app.ts
 │ │
-│ ├── constants/
-│ │ ├── roles.constant.ts # ADMIN, SUPPORT only
-│ │ ├── permissions.constant.ts
-│ │ ├── ticketStatus.constant.ts
-│ │ ├── disputeStatus.constant.ts
-│ │ ├── moderationStatus.constant.ts
-│ │ └── index.ts
-│ │
-│ ├── controllers/
-│ │ ├── auth/
-│ │ │ ├── admin.auth.controller.ts
-│ │ │ └── support.auth.controller.ts
+│ ├── shared/ # Shared Kernel
+│ │ ├── domain/
+│ │ │ ├── BaseEntity.ts
+│ │ │ ├── ValueObject.ts
+│ │ │ └── DomainEvent.ts
 │ │ │
-│ │ ├── admin/
-│ │ │ ├── dashboard.controller.ts
-│ │ │ ├── userManagement.controller.ts # Manage buyers/sellers
-│ │ │ ├── sellerManagement.controller.ts # Verify/suspend sellers
-│ │ │ ├── productModeration.controller.ts # Approve/reject products
-│ │ │ ├── orderManagement.controller.ts # View all orders
-│ │ │ ├── reviewModeration.controller.ts # Moderate reviews
-│ │ │ ├── commission.controller.ts # Set commission rates
-│ │ │ ├── analytics.controller.ts # Platform analytics
-│ │ │ ├── payout.controller.ts # Approve payouts
-│ │ │ └── settings.controller.ts # System settings
+│ │ ├── application/
+│ │ │ ├── UseCase.ts
+│ │ │ └── Result.ts
 │ │ │
-│ │ ├── support/
-│ │ │ ├── dashboard.controller.ts
-│ │ │ ├── ticket.controller.ts # Support tickets
-│ │ │ ├── dispute.controller.ts # Order disputes
-│ │ │ ├── user.controller.ts # View user info
-│ │ │ ├── order.controller.ts # View orders
-│ │ │ └── refund.controller.ts # Process refunds
+│ │ ├── infrastructure/
+│ │ │ ├── Database.ts
+│ │ │ ├── Redis.ts
+│ │ │ ├── Logger.ts
+│ │ │ ├── EventBus.ts
+│ │ │ └── Email.ts
 │ │ │
-│ │ └── common/
-│ │ ├── notification.controller.ts
-│ │ └── report.controller.ts
+│ │ └── exceptions/
+│ │ └── AppExceptions.ts
 │ │
-│ ├── database/
-│ │ ├── connection.ts # DB2 connection (admin data)
-│ │ ├── clientConnection.ts # DB1 connection (read client data)
-│ │ └── seeder.ts
 │ │
-│ ├── events/
-│ │ ├── admin.events.ts
-│ │ ├── moderation.events.ts
-│ │ ├── ticket.events.ts
-│ │ └── notification.events.ts
-│ │
-│ ├── exceptions/
-│ │ ├── HttpException.ts
-│ │ ├── ForbiddenException.ts
-│ │ ├── UnauthorizedException.ts
-│ │ └── NotFoundException.ts
-│ │
-│ ├── helpers/
-│ │ ├── asyncHandler.ts
-│ │ ├── apiResponse.ts
-│ │ ├── apiError.ts
-│ │ ├── auditLog.ts
-│ │ └── permission.helper.ts
-│ │
-│ ├── jobs/
-│ │ ├── email.job.ts
-│ │ ├── notification.job.ts
-│ │ ├── analytics.job.ts
-│ │ ├── report.job.ts
-│ │ └── cleanup.job.ts
-│ │
-│ ├── middleware/
-│ │ ├── auth.middleware.ts
-│ │ ├── adminRole.middleware.ts
-│ │ ├── supportRole.middleware.ts
-│ │ ├── permission.middleware.ts
-│ │ ├── auditLog.middleware.ts
-│ │ └── rateLimiter.middleware.ts
-│ │
-│ ├── models/ # DB2 MODELS (Admin + Support Data)
-│ │ ├── Admin.model.ts # Admin users
-│ │ ├── Support.model.ts # Support users
-│ │ ├── SupportTicket.model.ts # Customer tickets
-│ │ ├── TicketMessage.model.ts # Ticket messages
-│ │ ├── Dispute.model.ts # Order disputes
-│ │ ├── Moderation.model.ts # Product/Review moderation queue
-│ │ ├── AuditLog.model.ts # Admin action logs
-│ │ ├── Notification.model.ts # System notifications
-│ │ ├── Commission.model.ts # Commission settings
-│ │ ├── AnalyticsEvent.model.ts # Analytics tracking
-│ │ ├── Report.model.ts # Generated reports
-│ │ ├── EmailQueue.model.ts # Email queue
-│ │ ├── SystemSettings.model.ts # Platform settings
-│ │ └── index.ts
-│ │
-│ ├── routes/
-│ │ ├── index.ts
-│ │ ├── auth.routes.ts # Admin & Support auth
+│ ├── modules/ # Bounded Contexts
 │ │ │
-│ │ ├── admin/
-│ │ │ ├── dashboard.routes.ts
-│ │ │ ├── user.routes.ts
-│ │ │ ├── seller.routes.ts
-│ │ │ ├── product.routes.ts
-│ │ │ ├── order.routes.ts
-│ │ │ ├── review.routes.ts
-│ │ │ ├── commission.routes.ts
-│ │ │ ├── analytics.routes.ts
-│ │ │ ├── payout.routes.ts
-│ │ │ └── settings.routes.ts
+│ │ ├── users/ # USER CONTEXT
+│ │ │ ├── domain/
+│ │ │ │ ├── User.entity.ts # Entity + Business Logic
+│ │ │ │ ├── User.repository.ts # Interface only
+│ │ │ │ ├── User.events.ts # Domain Events
+│ │ │ │ └── User.service.ts # Domain Service
+│ │ │ │
+│ │ │ ├── application/
+│ │ │ │ ├── User.usecases.ts # All use cases
+│ │ │ │ ├── User.dto.ts # DTOs
+│ │ │ │ ├── User.mapper.ts # Mappers
+│ │ │ │ └── User.validator.ts # Validators
+│ │ │ │
+│ │ │ ├── infrastructure/
+│ │ │ │ ├── User.schema.ts # MongoDB Schema
+│ │ │ │ ├── User.repository.impl.ts # Repository Implementation
+│ │ │ │ └── User.eventHandlers.ts # Event Handlers
+│ │ │ │
+│ │ │ └── presentation/
+│ │ │ ├── User.controller.ts # HTTP Controller
+│ │ │ ├── User.routes.ts # Routes
+│ │ │ └── User.middleware.ts # Middleware
 │ │ │
-│ │ ├── support/
-│ │ │ ├── dashboard.routes.ts
-│ │ │ ├── ticket.routes.ts
-│ │ │ ├── dispute.routes.ts
-│ │ │ ├── user.routes.ts
-│ │ │ └── refund.routes.ts
 │ │ │
-│ │ └── common/
-│ │ ├── notification.routes.ts
-│ │ └── report.routes.ts
-│ │
-│ ├── services/
-│ │ ├── auth/
-│ │ │ ├── admin.auth.service.ts
-│ │ │ └── support.auth.service.ts
+│ │ ├── sellers/ # SELLER CONTEXT
+│ │ │ ├── domain/
+│ │ │ │ ├── Seller.entity.ts
+│ │ │ │ ├── Seller.repository.ts
+│ │ │ │ ├── Seller.events.ts
+│ │ │ │ └── Seller.service.ts
+│ │ │ │
+│ │ │ ├── application/
+│ │ │ │ ├── Seller.usecases.ts
+│ │ │ │ ├── Seller.dto.ts
+│ │ │ │ ├── Seller.mapper.ts
+│ │ │ │ └── Seller.validator.ts
+│ │ │ │
+│ │ │ ├── infrastructure/
+│ │ │ │ ├── Seller.schema.ts
+│ │ │ │ ├── Seller.repository.impl.ts
+│ │ │ │ └── Seller.eventHandlers.ts
+│ │ │ │
+│ │ │ └── presentation/
+│ │ │ ├── Seller.controller.ts
+│ │ │ ├── Seller.routes.ts
+│ │ │ └── Seller.middleware.ts
 │ │ │
-│ │ ├── admin/
-│ │ │ ├── userManagement.service.ts
-│ │ │ ├── sellerManagement.service.ts
-│ │ │ ├── productModeration.service.ts
-│ │ │ ├── orderManagement.service.ts
-│ │ │ ├── reviewModeration.service.ts
-│ │ │ ├── commission.service.ts
-│ │ │ ├── analytics.service.ts
-│ │ │ ├── payout.service.ts
-│ │ │ └── settings.service.ts
 │ │ │
-│ │ ├── support/
-│ │ │ ├── ticket.service.ts
-│ │ │ ├── dispute.service.ts
-│ │ │ ├── refund.service.ts
-│ │ │ └── escalation.service.ts
+│ │ ├── products/ # PRODUCT CONTEXT
+│ │ │ ├── domain/
+│ │ │ │ ├── Product.entity.ts
+│ │ │ │ ├── Product.repository.ts
+│ │ │ │ ├── Product.events.ts
+│ │ │ │ └── Product.service.ts
+│ │ │ │
+│ │ │ ├── application/
+│ │ │ │ ├── Product.usecases.ts
+│ │ │ │ ├── Product.dto.ts
+│ │ │ │ ├── Product.mapper.ts
+│ │ │ │ └── Product.validator.ts
+│ │ │ │
+│ │ │ ├── infrastructure/
+│ │ │ │ ├── Product.schema.ts
+│ │ │ │ ├── Product.repository.impl.ts
+│ │ │ │ └── Product.eventHandlers.ts
+│ │ │ │
+│ │ │ └── presentation/
+│ │ │ ├── Product.controller.ts
+│ │ │ ├── Product.routes.ts
+│ │ │ └── Product.middleware.ts
 │ │ │
-│ │ └── common/
-│ │ ├── notification.service.ts
-│ │ ├── email.service.ts
-│ │ ├── report.service.ts
-│ │ └── auditLog.service.ts
+│ │ │
+│ │ ├── orders/ # ORDER CONTEXT
+│ │ │ ├── domain/
+│ │ │ │ ├── Order.entity.ts
+│ │ │ │ ├── Order.repository.ts
+│ │ │ │ ├── Order.events.ts
+│ │ │ │ └── Order.service.ts
+│ │ │ │
+│ │ │ ├── application/
+│ │ │ │ ├── Order.usecases.ts
+│ │ │ │ ├── Order.dto.ts
+│ │ │ │ ├── Order.mapper.ts
+│ │ │ │ └── Order.validator.ts
+│ │ │ │
+│ │ │ ├── infrastructure/
+│ │ │ │ ├── Order.schema.ts
+│ │ │ │ ├── Order.repository.impl.ts
+│ │ │ │ └── Order.eventHandlers.ts
+│ │ │ │
+│ │ │ └── presentation/
+│ │ │ ├── Order.controller.ts
+│ │ │ ├── Order.routes.ts
+│ │ │ └── Order.middleware.ts
+│ │ │
+│ │ │
+│ │ ├── reviews/ # REVIEW CONTEXT
+│ │ │ ├── domain/
+│ │ │ │ ├── Review.entity.ts
+│ │ │ │ ├── Review.repository.ts
+│ │ │ │ ├── Review.events.ts
+│ │ │ │ └── Review.service.ts
+│ │ │ │
+│ │ │ ├── application/
+│ │ │ │ ├── Review.usecases.ts
+│ │ │ │ ├── Review.dto.ts
+│ │ │ │ ├── Review.mapper.ts
+│ │ │ │ └── Review.validator.ts
+│ │ │ │
+│ │ │ ├── infrastructure/
+│ │ │ │ ├── Review.schema.ts
+│ │ │ │ ├── Review.repository.impl.ts
+│ │ │ │ └── Review.eventHandlers.ts
+│ │ │ │
+│ │ │ └── presentation/
+│ │ │ ├── Review.controller.ts
+│ │ │ ├── Review.routes.ts
+│ │ │ └── Review.middleware.ts
+│ │ │
+│ │ │
+│ │ ├── payments/ # PAYMENT CONTEXT
+│ │ │ ├── domain/
+│ │ │ │ ├── Payment.entity.ts
+│ │ │ │ ├── Payment.repository.ts
+│ │ │ │ ├── Payment.events.ts
+│ │ │ │ └── Payment.service.ts
+│ │ │ │
+│ │ │ ├── application/
+│ │ │ │ ├── Payment.usecases.ts
+│ │ │ │ ├── Payment.dto.ts
+│ │ │ │ ├── Payment.mapper.ts
+│ │ │ │ └── Payment.validator.ts
+│ │ │ │
+│ │ │ ├── infrastructure/
+│ │ │ │ ├── Payment.schema.ts
+│ │ │ │ ├── Payment.repository.impl.ts
+│ │ │ │ └── Payment.eventHandlers.ts
+│ │ │ │
+│ │ │ └── presentation/
+│ │ │ ├── Payment.controller.ts
+│ │ │ ├── Payment.routes.ts
+│ │ │ └── Payment.middleware.ts
+│ │ │
+│ │ │
+│ │ ├── support/ # SUPPORT CONTEXT
+│ │ │ ├── domain/
+│ │ │ │ ├── Ticket.entity.ts
+│ │ │ │ ├── Ticket.repository.ts
+│ │ │ │ ├── Ticket.events.ts
+│ │ │ │ └── Ticket.service.ts
+│ │ │ │
+│ │ │ ├── application/
+│ │ │ │ ├── Ticket.usecases.ts
+│ │ │ │ ├── Ticket.dto.ts
+│ │ │ │ ├── Ticket.mapper.ts
+│ │ │ │ └── Ticket.validator.ts
+│ │ │ │
+│ │ │ ├── infrastructure/
+│ │ │ │ ├── Ticket.schema.ts
+│ │ │ │ ├── Ticket.repository.impl.ts
+│ │ │ │ └── Ticket.eventHandlers.ts
+│ │ │ │
+│ │ │ └── presentation/
+│ │ │ ├── Ticket.controller.ts
+│ │ │ ├── Ticket.routes.ts
+│ │ │ └── Ticket.middleware.ts
+│ │ │
+│ │ │
+│ │ ├── disputes/ # DISPUTE CONTEXT
+│ │ │ ├── domain/
+│ │ │ │ ├── Dispute.entity.ts
+│ │ │ │ ├── Dispute.repository.ts
+│ │ │ │ ├── Dispute.events.ts
+│ │ │ │ └── Dispute.service.ts
+│ │ │ │
+│ │ │ ├── application/
+│ │ │ │ ├── Dispute.usecases.ts
+│ │ │ │ ├── Dispute.dto.ts
+│ │ │ │ ├── Dispute.mapper.ts
+│ │ │ │ └── Dispute.validator.ts
+│ │ │ │
+│ │ │ ├── infrastructure/
+│ │ │ │ ├── Dispute.schema.ts
+│ │ │ │ ├── Dispute.repository.impl.ts
+│ │ │ │ └── Dispute.eventHandlers.ts
+│ │ │ │
+│ │ │ └── presentation/
+│ │ │ ├── Dispute.controller.ts
+│ │ │ ├── Dispute.routes.ts
+│ │ │ └── Dispute.middleware.ts
+│ │ │
+│ │ │
+│ │ ├── notifications/ # NOTIFICATION CONTEXT
+│ │ │ ├── domain/
+│ │ │ │ ├── Notification.entity.ts
+│ │ │ │ ├── Notification.repository.ts
+│ │ │ │ ├── Notification.events.ts
+│ │ │ │ └── Notification.service.ts
+│ │ │ │
+│ │ │ ├── application/
+│ │ │ │ ├── Notification.usecases.ts
+│ │ │ │ ├── Notification.dto.ts
+│ │ │ │ ├── Notification.mapper.ts
+│ │ │ │ └── Notification.validator.ts
+│ │ │ │
+│ │ │ ├── infrastructure/
+│ │ │ │ ├── Notification.schema.ts
+│ │ │ │ ├── Notification.repository.impl.ts
+│ │ │ │ └── Notification.eventHandlers.ts
+│ │ │ │
+│ │ │ └── presentation/
+│ │ │ ├── Notification.controller.ts
+│ │ │ ├── Notification.routes.ts
+│ │ │ └── Notification.middleware.ts
+│ │ │
+│ │ │
+│ │ ├── analytics/ # ANALYTICS CONTEXT
+│ │ │ ├── domain/
+│ │ │ │ ├── Analytics.entity.ts
+│ │ │ │ ├── Analytics.repository.ts
+│ │ │ │ ├── Analytics.events.ts
+│ │ │ │ └── Analytics.service.ts
+│ │ │ │
+│ │ │ ├── application/
+│ │ │ │ ├── Analytics.usecases.ts
+│ │ │ │ ├── Analytics.dto.ts
+│ │ │ │ ├── Analytics.mapper.ts
+│ │ │ │ └── Analytics.validator.ts
+│ │ │ │
+│ │ │ ├── infrastructure/
+│ │ │ │ ├── Analytics.schema.ts
+│ │ │ │ ├── Analytics.repository.impl.ts
+│ │ │ │ └── Analytics.eventHandlers.ts
+│ │ │ │
+│ │ │ └── presentation/
+│ │ │ ├── Analytics.controller.ts
+│ │ │ ├── Analytics.routes.ts
+│ │ │ └── Analytics.middleware.ts
+│ │ │
+│ │ │
+│ │ ├── auth/ # AUTH CONTEXT
+│ │ │ ├── domain/
+│ │ │ │ ├── Auth.entity.ts
+│ │ │ │ ├── Auth.repository.ts
+│ │ │ │ ├── Auth.events.ts
+│ │ │ │ └── Auth.service.ts
+│ │ │ │
+│ │ │ ├── application/
+│ │ │ │ ├── Auth.usecases.ts
+│ │ │ │ ├── Auth.dto.ts
+│ │ │ │ ├── Auth.mapper.ts
+│ │ │ │ └── Auth.validator.ts
+│ │ │ │
+│ │ │ ├── infrastructure/
+│ │ │ │ ├── Auth.schema.ts
+│ │ │ │ ├── Auth.repository.impl.ts
+│ │ │ │ └── Auth.eventHandlers.ts
+│ │ │ │
+│ │ │ └── presentation/
+│ │ │ ├── Auth.controller.ts
+│ │ │ ├── Auth.routes.ts
+│ │ │ └── Auth.middleware.ts
+│ │ │
+│ │ │
+│ │ └── admin/ # ADMIN CONTEXT
+│ │ ├── domain/
+│ │ │ ├── Admin.entity.ts
+│ │ │ ├── Admin.repository.ts
+│ │ │ ├── Admin.events.ts
+│ │ │ └── Admin.service.ts
+│ │ │
+│ │ ├── application/
+│ │ │ ├── Admin.usecases.ts
+│ │ │ ├── Admin.dto.ts
+│ │ │ ├── Admin.mapper.ts
+│ │ │ └── Admin.validator.ts
+│ │ │
+│ │ ├── infrastructure/
+│ │ │ ├── Admin.schema.ts
+│ │ │ ├── Admin.repository.impl.ts
+│ │ │ └── Admin.eventHandlers.ts
+│ │ │
+│ │ └── presentation/
+│ │ ├── Admin.controller.ts
+│ │ ├── Admin.routes.ts
+│ │ └── Admin.middleware.ts
 │ │
-│ ├── sockets/
-│ │ ├── index.ts
-│ │ ├── admin.socket.ts
-│ │ └── support.socket.ts
 │ │
-│ ├── types/
-│ │ ├── express.d.ts
-│ │ ├── admin.types.ts
-│ │ ├── support.types.ts
-│ │ ├── ticket.types.ts
-│ │ ├── moderation.types.ts
-│ │ └── index.ts
-│ │
-│ ├── utils/
-│ │ ├── jwt.util.ts
-│ │ ├── bcrypt.util.ts
-│ │ ├── logger.util.ts
-│ │ ├── auditLog.util.ts
-│ │ └── permission.util.ts
-│ │
-│ ├── validations/
-│ │ ├── admin.validation.ts
-│ │ ├── ticket.validation.ts
-│ │ ├── dispute.validation.ts
-│ │ └── moderation.validation.ts
-│ │
-│ ├── views/
-│ │ ├── ticketCreated.pug
-│ │ ├── disputeResolved.pug
-│ │ └── adminNotification.pug
-│ │
-│ └── server.ts
+│ └── config/
+│ ├── app.config.ts
+│ ├── database.config.ts
+│ └── index.ts
+│
 │
 ├── tests/
+│ ├── unit/
+│ ├── integration/
+│ └── e2e/
+│
 ├── .env
 ├── .env.example
 ├── .gitignore
-├── .prettierrc.json
-├── eslint.config.mjs
 ├── package.json
-├── readme.md
-└── tsconfig.json
+├── tsconfig.json
+└── README.md
